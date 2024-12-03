@@ -1,11 +1,12 @@
 import express, { Request, Response } from 'express';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
 
 const app = express();
 
-app.get('/cpf/:cpf', async (req: Request, res: Response): Promise<void> => {
+export async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
     try {
-        const { cpf } = req.params;
+      const cpf: string | undefined = req.query.cpf as string;
 
         if (!/^\d{11}$/.test(cpf)) {
             res.status(400).json({ error: 'CPF inválido. Certifique-se de enviar 11 dígitos numéricos.' });
@@ -52,7 +53,7 @@ app.get('/cpf/:cpf', async (req: Request, res: Response): Promise<void> => {
         }).then((response) => {
             const responseData :any = response.data as { data: any };
             if (responseData.erro == true ){
-                res.status(500).json({ message: 'Alguma coisa deu errado, código de erro 3, estamos transaferindo você..' });
+                res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 3, estamos transaferindo você..' });
             } else{
                 if (responseData.objeto.perfilProposta != null && responseData.objeto.perfilProposta[0].permiteEmissao) {
                     res.json({ message: 'Parabéns, você está apto a fazer um emprestimo, estamos transferindo você.' });
@@ -61,11 +62,11 @@ app.get('/cpf/:cpf', async (req: Request, res: Response): Promise<void> => {
                 }
             }
         }).catch((error) => {
-            res.status(500).json({ message: 'Alguma coisa deu errado, código de erro 2, estamos transaferindo você..' });
+            res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 2, estamos transaferindo você..' });
         });
     } catch (error) {
-        res.status(500).json({ message: 'Alguma coisa deu errado, código de erro 1, estamos transaferindo você..' });
+        res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 1, estamos transaferindo você..' });
     }
-});
+}
 
 export default app;
