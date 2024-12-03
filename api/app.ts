@@ -68,5 +68,12 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
         res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 1, estamos transaferindo você..' });
     }
 }
+app.get('/cpf', async (req, res) => {
+    
+    const vercelReq = req as unknown as VercelRequest;
+    const vercelRes = res as unknown as VercelResponse;
+  
+    await handler(vercelReq, vercelRes);
+  });
 
 export default app;
