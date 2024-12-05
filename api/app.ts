@@ -9,7 +9,7 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
       const cpf: string | undefined = req.query.cpf as string;
 
         if (!/^\d{11}$/.test(cpf)) {
-            res.status(400).json({ error: 'CPF inválido. Certifique-se de enviar 11 dígitos numéricos.' });
+            res.status(400).json({ data: { message: 'CPF inválido. Certifique-se de enviar 11 dígitos numéricos.' } });
         }
         const isValidCpf = (cpf: string): boolean => {
             let sum = 0;
@@ -34,7 +34,7 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
         };
 
         if (!isValidCpf(cpf)) {
-            res.status(400).json({ error: 'CPF inválido.' });
+            res.status(400).json({ data: {  message: 'CPF inválido.'} });
         }
 
         const token = req.headers.authorization?.split(' ')[1];
@@ -68,6 +68,30 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
         res.status(500).json({ data: { message: 'Alguma coisa deu errado, código de erro 1, tente novamente mais tarde..' } });
     }
 }
+export async function handlerSimulation(req: VercelRequest, res: VercelResponse): Promise<void> {
+    try {
+      const cpf: string | undefined = req.query.cpf as string;
+
+        const token = req.headers.authorization?.split(' ')[1];
+
+        await axios.post(`https://app1.gerencialcredito.com.br/microservice/crefisa/10431/captura/simulacao-proposta/${cpf}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        , data: req.body
+        }).then((response) => {
+            console.log(response)
+            const responseData :any = response.data as { data: any };
+            if (responseData.erro == true ){
+                res.status(500).json({ data: {message: 'Estamos transferindo você..' }});
+            }
+        }).catch((error) => {
+            res.status(500).json({ data: { message: 'Estamos transferindo você..' } });
+        });
+    } catch (error) {
+        res.status(500).json({ data: { message: 'Estamos transferindo você..' } });
+    }
+}
 app.get('/cpf', async (req, res) => {
     
     const vercelReq = req as unknown as VercelRequest;
@@ -75,5 +99,13 @@ app.get('/cpf', async (req, res) => {
   
     await handler(vercelReq, vercelRes);
   });
+
+app.post('/simular', async (req, res) => {
+    
+    const vercelReq = req as unknown as VercelRequest;
+    const vercelRes = res as unknown as VercelResponse;
+
+    await handlerSimulation(vercelReq, vercelRes);
+});
 
 export default app;
