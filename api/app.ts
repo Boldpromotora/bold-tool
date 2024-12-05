@@ -53,19 +53,19 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
         }).then((response) => {
             const responseData :any = response.data as { data: any };
             if (responseData.erro == true ){
-                res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 3, estamos transaferindo você..' });
+                res.status(500).json({ data: {message: 'Alguma coisa deu errado, código de erro 3, estamos transaferindo você..' }});
             } else{
                 if (responseData.objeto.perfilProposta != null && responseData.objeto.perfilProposta[0].permiteEmissao) {
-                    res.json({ message: 'Parabéns, você está apto a fazer um emprestimo, estamos transferindo você.' });
+                    res.json({ data: { message: 'Parabéns, você está apto a fazer um emprestimo, estamos transferindo você.' } });
                 } else {
-                    res.status(500).json({ message: 'Infelizmente você já tem um contrato ativo, agradecemos seu contato.' });
+                    res.status(500).json({ data: { message: 'Infelizmente você já tem um contrato ativo, agradecemos seu contato.' } });
                 }
             }
         }).catch((error) => {
-            res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 2, estamos transaferindo você..' });
+            res.status(500).json({ data: { message: 'Alguma coisa deu errado, código de erro 2, estamos transaferindo você..' } });
         });
     } catch (error) {
-        res.status(200).json({ message: 'Alguma coisa deu errado, código de erro 1, estamos transaferindo você..' });
+        res.status(500).json({ data: { message: 'Alguma coisa deu errado, código de erro 1, estamos transaferindo você..' } });
     }
 }
 app.get('/cpf', async (req, res) => {
