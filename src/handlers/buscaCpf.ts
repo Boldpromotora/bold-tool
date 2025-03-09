@@ -48,6 +48,7 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
                 Authorization: `Bearer ${token}`
             }
         }).then((response) => {
+            console.log(response.data); 
             const responseData :any = response.data as { data: any };
             if (responseData.erro == true ){
                 res.status(500).json({ data: {message: 'Alguma coisa deu errado, código de erro 3, tente novamente mais tarde..' }});
