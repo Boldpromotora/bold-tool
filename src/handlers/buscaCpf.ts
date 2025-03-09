@@ -40,6 +40,7 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
             res.status(401).json({ error: 'Token não fornecido.' });
             return;
         }
+        console.log('starting request to Crefisa API with token:', token);
         // erro 3: API da crefisa retornou erro
         // erro 2: Erro ao fazer a requisição para a API da crefisa
         // erro 1: Erro interno
@@ -48,7 +49,6 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
                 Authorization: `Bearer ${token}`
             }
         }).then((response) => {
-            console.log(response.data); 
             const responseData :any = response.data as { data: any };
             if (responseData.erro == true ){
                 res.status(500).json({ data: {message: 'Alguma coisa deu errado, código de erro 3, tente novamente mais tarde..' }});
@@ -60,7 +60,7 @@ export async function handler(req: VercelRequest, res: VercelResponse): Promise<
                 }
             }
         }).catch((error) => {
-            res.status(500).json({ data: { message: 'Alguma coisa deu errado, código de erro 2, tente novamente mais tarde..' } });
+            res.status(500).json({ data: { message: JSON.stringify(error) } });
         });
     } catch (error) {
         res.status(500).json({ data: { message: 'Alguma coisa deu errado, código de erro 1, tente novamente mais tarde..' } });
