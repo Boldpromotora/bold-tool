@@ -10,10 +10,6 @@
       {
         "src": "/cpf",
         "dest": "/api/server.ts"
-      },
-      {
-        "src": "/simular",
-        "dest": "/api/server.ts"
       }
     ]
   }
